@@ -3,48 +3,117 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="keywords" content="HTML, CSS, JavaScript">
-		<script>
-			function computerMove(){
-				let r = Math.floor(Math.random()*10)%3;
-				let moves = ["stone", "paper", "scissor"];
-				return moves[r];
-			}
-		</script>
-		<script>
-			function playerMove(){
-				return window.prompt("Enter your move");
-			}
-		</script>
-		<script>	
-			function game(){
-				let pMove;
-				do {
-					pMove = playerMove().toLowerCase();
-				}
-				while(pMove != 'stone' && pMove != 'paper' && pMove != 'scissor' && !alert("Invalid Input. Try again!!"));
-				let cMove = computerMove();
-				let score = result(pMove, cMove);
-				alert(`Your Move: ${pMove}\nMy Move: ${cMove}\n${score > 0 ? 'You won this round' : (score < 0 ? 'You lose this round' : 'This round resulted in tie!')}`);			
-				return score;
-			}
-		</script>
-		<script>
-			function result(pMove, cMove){
-				if(pMove == 'stone')
-					return cMove == 'stone' ? 0 : (cMove == 'paper' ? -1 : 1);
-				else if(pMove == 'paper')
-					return cMove == 'paper' ? 0 : (cMove == 'scissor' ? -1 : 1);
-				else
-					return cMove == 'scissor' ? 0 : (cMove == 'stone' ? -1 : 1);
-			}
-		</script>
-
-		<script>
-			let winCount = 0;
-			for(let i=0; i<5; i++){
-				winCount += game();
-			}
-			winCount > 0 ? alert("You Won") : (winCount < 0 ? alert("You Lose") : alert("Tournament tied"));
-		</script>
 	</head>
+	<body>
+		<div id="scores">
+			<p id="cScore">My Score  : 0</p>
+			<p id="pScore">Your Score: 0</p>
+		</div><br>
+		<div id="buttons">
+			<p>Choose your Move</p>
+			<button id="sto" value="stone">Stone</button>
+			<button id="pap" value="paper">Paper</button>
+			<button id="sci" value="scissor">Scissor</button>
+		</div>
+		<div id="screen">
+			<p></p>
+			<p></p>
+		</div>
+	</body>
+	<script>
+		function computerMove(){
+			let r = Math.floor(Math.random()*10)%3;
+			let moves = ["stone", "paper", "scissor"];
+			return moves[r];
+		}
+	</script>
+	<script >
+		function cur_res(score){
+			let screen = document.querySelector('#screen');
+			let p = document.createElement("p");
+			if(score>0){
+				p.innerHTML = 'You Won This Round!!!';
+			}
+			else if(score < 0){
+				p.innerHTML = 'I Won This Round!!!';
+			}
+			else{
+				p.innerHTML = 'This Round Tied!!!';
+			}
+			screen.appendChild(p);
+		}
+	</script>
+	<script >
+		function eventhandler(button){
+			function event(){
+				cur_score = disp_res(button.value, computerMove());
+				cur_res(cur_score);
+				if(cur_score > 0){
+					pScore++;
+				}
+				else if(cur_score < 0){
+					cScore++;
+				}
+				cs.innerHTML = `My Score  : ${cScore}`;
+				ps.innerHTML = `Your Score  : ${pScore}`;
+				if(pScore >= 5 || cScore >= 5){
+					for(let i = 0; i<3; i++){
+						buttons[i].removeEventListener('click', play[i]);
+					}
+					let screen = document.querySelector('#screen');
+					while(screen.lastChild){
+						screen.removeChild(screen.lastChild);
+					}
+					let p = document.createElement("p");
+					if(pScore > cScore){
+						p.innerHTML = 'You Won This Tournament!!!';
+					}
+					else if(pScore < cScore){
+						p.innerHTML = 'I Won This Tournament!!!';
+					}
+					else{
+						p.innerHTML = 'This Tournament is Draw!!!';
+					}
+					p.style.fontSize = "30px";
+					screen.appendChild(p);
+
+				}
+			}
+			return event;
+		}
+	</script>
+	<script>
+		let bu_div = document.querySelector("#buttons");
+		let buttons = Array.from(bu_div.querySelectorAll("button"));
+		let scores = document.querySelector("#scores");
+		let cs = scores.querySelector("#cScore");
+		let ps = scores.querySelector("#pScore");
+		let cur_score;
+		let pScore = 0, cScore = 0;
+		let play = [eventhandler(buttons[0]), eventhandler(buttons[1]), eventhandler(buttons[2])];
+		for(let i = 0; i<3; i++){
+			buttons[i].addEventListener('click', play[i]);
+		}
+
+	</script>
+	<script>
+		function display(pMove, cMove){
+			let screen = document.querySelector('#screen');
+			screen.removeChild(screen.lastChild);
+			let p = screen.querySelector('p');
+			p.innerHTML = `My Move  : ${cMove}<br>Your Move: ${pMove}`;
+		}
+	</script>
+	<script>
+		function disp_res(pMove, cMove){
+			display(pMove, cMove);
+			if(pMove == 'stone'){
+				return cMove == 'stone' ? 0 : (cMove == 'paper' ? -1 : 1);
+			}
+			else if(pMove == 'paper')
+				return cMove == 'paper' ? 0 : (cMove == 'scissor' ? -1 : 1);
+			else
+				return cMove == 'scissor' ? 0 : (cMove == 'stone' ? -1 : 1);
+		}
+	</script>
 </html>
